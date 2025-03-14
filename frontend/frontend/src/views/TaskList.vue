@@ -153,12 +153,10 @@ const isToday = (date) => moment(date).isSame(moment(), 'day')
 const getCompletedSubtasks = (task) =>
     task.subtasks.filter(subtask => subtask.completed).length
 
-// Abre o modal de criação de Task
 const createTask = () => {
     showCreateTaskModal.value = true
 }
 
-// Atualiza a lista de tasks com a nova task criada
 const onTaskCreated = (newTask) => {
     tasks.value.push(newTask)
     showCreateTaskModal.value = false
@@ -176,13 +174,11 @@ const setDeadLine = (task) => {
     showSetDeadLineModal.value = true
 }
 
-// Abre o modal para excluir task
 const deleteTask = (task) => {
     selectedTask.value = task
     showDeleteTaskModal.value = true
 }
 
-// Atualiza a task na lista (exemplo simples)
 const updateTask = (updatedTask) => {
     const index = tasks.value.findIndex(t => t.id === updatedTask.id)
     if (index !== -1) {
@@ -190,14 +186,13 @@ const updateTask = (updatedTask) => {
     }
 }
 
-// Remove a task da lista (exemplo simples)
 const removeTask = (taskId) => {
     tasks.value = tasks.value.filter(t => t.id !== taskId)
 }
 </script>
 
 <style scoped>
-/* (Seu CSS continua igual) */
+
 .container {
     display: flex;
     flex-direction: column;

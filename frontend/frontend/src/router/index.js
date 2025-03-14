@@ -12,7 +12,7 @@ const router = createRouter({
     {
       path: '/create-task',
       name: 'createTask',
-      component: () => import('@/views/CreateTask.vue')
+      component: () => import('@/views/CreateTaskModal.vue')
     },
     {
       path: '/tasks',
