@@ -192,6 +192,7 @@ button:hover {
 
 <script setup>
 import { defineEmits, ref } from "vue";
+import { useRouter } from "vue-router";
 
 const name = ref("");
 const email = ref("");
@@ -199,6 +200,8 @@ const password = ref("");
 const errors = ref([]);
 
 const emit = defineEmits(["switchAuthView"]);
+
+const router = useRouter();
 
 const register = () => {
     errors.value = [];
@@ -208,11 +211,13 @@ const register = () => {
     if (!password.value.trim() || password.value.length < 8) errors.value.push("A senha deve ter pelo menos 8 caracteres.");
 
     if (errors.value.length === 0) {
-        console.log("Usuário cadastrado:", name.value, email.value);
-        emit("switchAuthView"); // Voltar para a tela de login
+        router.push({ name: "login" });
     } else {
-        console.log("Erros no cadastro:", errors.value);
     }
+};
+
+const switchAuthView = () => {
+    router.push({ name: "login" });
 };
 
 </script>
