@@ -77,13 +77,15 @@ const handleClose = () => {
 }
 
 .modal-box {
-    background-color: cornsilk;
+    background-color: #fff;
     border-radius: 8px;
     width: 70%;
     max-width: 600px;
     padding: 20px;
     position: relative;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
 }
+
 
 .modal-header {
     display: flex;
