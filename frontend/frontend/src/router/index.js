@@ -5,7 +5,7 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
+      path: '/login',
       name: 'home',
       component: HomeView,
     },
@@ -15,12 +15,7 @@ const router = createRouter({
       component: () => import('@/views/CreateTaskModal.vue')
     },
     {
-      path: '/tasks',
-      name: 'taskList',
-      component: () => import('@/views/TaskList.vue')
-    },
-    {
-      path: '/tasks',
+      path: '/task-list',
       name: 'taskList',
       component: () => import('@/views/TaskList.vue')
     },

@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits } from 'vue'
+import { ref, defineProps, defineEmits, watch } from 'vue'
 
 const props = defineProps({
     show: { type: Boolean, default: false },
@@ -28,12 +28,24 @@ const emit = defineEmits(['close', 'deadlineUpdated'])
 
 const deadline = ref('')
 
+watch(() => props.task, (newTask) => {
+    if (newTask && newTask.due_date) {
+        const dateObj = new Date(newTask.due_date)
+        const yyyy = dateObj.getFullYear()
+        const mm = String(dateObj.getMonth() + 1).padStart(2, '0')
+        const dd = String(dateObj.getDate()).padStart(2, '0')
+        deadline.value = `${yyyy}-${mm}-${dd}`
+    } else {
+        deadline.value = ''
+    }
+}, { immediate: true })
+
 const handleSubmit = async () => {
     try {
         const response = await fetch(`http://127.0.0.1:8000/api/tasks/${props.task.id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ dueDate: deadline.value })
+            body: JSON.stringify({ due_date: deadline.value })
         })
         if (!response.ok) {
             console.error('Error updating deadline', response.status)

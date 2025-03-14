@@ -30,29 +30,26 @@
 </template>
 
 <script setup>
-import { defineEmits } from "vue";
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 
 const email = ref("");
 const password = ref("");
 const hover = ref(false);
 
-const login = () => {
-    console.log("Tentando login com:", email.value, password.value);
+const router = useRouter();
 
+const login = () => {
     if (email.value && password.value) {
-        console.log("Login bem-sucedido! Redirecionando para a tela de tarefas...");
-        emit("redirectToTaskList");
+        router.push({ name: "taskList" });
     } else {
         alert("Preencha os campos para continuar.");
     }
 };
 
-const emit = defineEmits(["switchAuthView"]);
-
 const switchAuthView = () => {
     console.log("Clique detectado em Login.vue - Mudando para Register");
-    emit("switchAuthView");
+    router.push({ name: "register" });
 };
 </script>
 
@@ -115,7 +112,6 @@ const switchAuthView = () => {
     font-family: Montserrat;
     font-weight: 700;
     font-size: 1.5rem;
-    font-weight: bold;
     color: #000;
     margin-bottom: 10px;
     transition: color 0.5s ease-in-out;
@@ -140,7 +136,6 @@ const switchAuthView = () => {
     width: auto;
     margin-top: 20px;
 }
-
 
 .gradient {
     width: 70px;
@@ -216,7 +211,6 @@ input {
     color: #777;
     cursor: pointer;
     margin-bottom: 20px;
-    cursor: pointer;
     text-decoration: underline;
 }
 

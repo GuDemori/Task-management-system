@@ -39,20 +39,36 @@ const form = ref({
     dueDate: ''
 })
 
+// Preenche o formulário com os dados da task assim que ela mudar
 watch(() => props.task, (newTask) => {
     if (newTask && Object.keys(newTask).length) {
         form.value.title = newTask.title
         form.value.description = newTask.description
-        form.value.dueDate = newTask.due_date || ''
+        if (newTask.due_date) {
+            // Converte para YYYY-MM-DD para o input date
+            const dateObj = new Date(newTask.due_date)
+            const yyyy = dateObj.getFullYear()
+            const mm = String(dateObj.getMonth() + 1).padStart(2, '0')
+            const dd = String(dateObj.getDate()).padStart(2, '0')
+            form.value.dueDate = `${yyyy}-${mm}-${dd}`
+        } else {
+            form.value.dueDate = ''
+        }
     }
 }, { immediate: true })
 
 const handleSubmit = async () => {
     try {
+        // Cria o payload com a chave 'due_date'
+        const payload = {
+            title: form.value.title,
+            description: form.value.description,
+            due_date: form.value.dueDate
+        }
         const response = await fetch(`http://127.0.0.1:8000/api/tasks/${props.task.id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(form.value)
+            body: JSON.stringify(payload)
         })
         if (!response.ok) {
             console.error('Error updating task', response.status)

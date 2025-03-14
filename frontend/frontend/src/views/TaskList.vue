@@ -46,13 +46,14 @@
                         <div class="task-footer">
                             <div class="task-date"
                                 :class="{ expired: isExpired(task.due_date), today: isToday(task.due_date) }">
-                                <img src="../assets/calendar.svg" alt="calendar icon" class="calendar-icon" /> {{ formatDate(task.due_date) }}
+                                <img src="../assets/calendar.svg" alt="calendar icon" class="calendar-icon" /> {{
+                                    formatDate(task.due_date) }}
                             </div>
                             <div v-if="task.hover" class="task-icons">
                                 <button @click="editTask(task)">
                                     <img src="../assets/edit.svg" alt="edit icon" class="edit-icon" />
                                 </button>
-                                <button @click="setDeadLine(task)">
+                                <button @click="setDeadline(task)">
                                     <img src="../assets/calendar.svg" alt="calendar icon" class="calendar-icon" />
                                 </button>
                                 <button @click="deleteTask(task)">
@@ -85,9 +86,9 @@
 
     <EditTaskModal :show="showEditTaskModal" :task="selectedTask" @close="showEditTaskModal = false"
         @taskUpdated="updateTask" />
-        
-    <SetDeadLineModal :show="showSetDeadLineModal" :task="selectedTask" @close="showSetDeadLineModal = false"
-        @DeadLineUpdated="updateTask" />
+
+    <SetDeadlineModal :show="showSetDeadlineModal" :task="selectedTask" @close="showSetDeadlineModal = false"
+        @DeadlineUpdated="updateTask" />
 
     <!-- Modal para excluir Task -->
     <DeleteTaskModal :show="showDeleteTaskModal" :task="selectedTask" @close="showDeleteTaskModal = false"
@@ -100,14 +101,14 @@ import moment from 'moment'
 import TaskModal from './TaskModal.vue'
 import CreateTaskModal from './CreateTaskModal.vue'
 import EditTaskModal from './EditTaskModal.vue'
-import SetDeadLineModal from './SetDeadLineModal.vue'
+import SetDeadlineModal from './SetDeadlineModal.vue'
 import DeleteTaskModal from './DeleteTaskModal.vue'
 
 const selectedTask = ref(null)
 const showModal = ref(false)
 const showCreateTaskModal = ref(false)
 const showEditTaskModal = ref(false)
-const showSetDeadLineModal = ref(false)
+const showSetDeadlineModal = ref(false)
 const showDeleteTaskModal = ref(false)
 const filterType = ref('all')
 const tasks = ref([])
@@ -158,20 +159,20 @@ const createTask = () => {
 }
 
 const onTaskCreated = (newTask) => {
+    newTask.subtasks = newTask.subtasks || []
     tasks.value.push(newTask)
     showCreateTaskModal.value = false
 }
 
-// Abre o modal de edição
+
 const editTask = (task) => {
     selectedTask.value = task
     showEditTaskModal.value = true
 }
 
-// Abre o modal para alterar DeadLine
-const setDeadLine = (task) => {
+const setDeadline = (task) => {
     selectedTask.value = task
-    showSetDeadLineModal.value = true
+    showSetDeadlineModal.value = true
 }
 
 const deleteTask = (task) => {
@@ -182,7 +183,7 @@ const deleteTask = (task) => {
 const updateTask = (updatedTask) => {
     const index = tasks.value.findIndex(t => t.id === updatedTask.id)
     if (index !== -1) {
-        tasks.value[index] = updatedTask
+        Object.assign(tasks.value.splice(index, 1, updatedTask))
     }
 }
 
@@ -192,7 +193,6 @@ const removeTask = (taskId) => {
 </script>
 
 <style scoped>
-
 .container {
     display: flex;
     flex-direction: column;
@@ -270,27 +270,28 @@ const removeTask = (taskId) => {
     padding-right: 150px;
     overflow-y: auto;
 }
-.calendar-icon{
+
+.calendar-icon {
     filter: brightness(0) saturate(100%);
 }
 
-.edit-icon{
+.edit-icon {
     filter: brightness(0) saturate(100%);
 }
 
-.calendar-icon{
+.calendar-icon {
     filter: brightness(0) saturate(100%);
 }
 
-.drawer-icon{
+.drawer-icon {
     filter: brightness(0) saturate(100%);
 }
 
-.alert-icon{
+.alert-icon {
     filter: brightness(0) saturate(100%);
 }
 
-.add-icon{
+.add-icon {
     margin-top: 10px;
     filter: brightness(0) saturate(100%);
 }
