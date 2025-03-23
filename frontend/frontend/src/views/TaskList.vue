@@ -65,7 +65,7 @@
                     <div v-if="task.subtasks.length" class="separator"></div>
                     <div v-if="task.subtasks.length" class="subtask-list">
                         <div v-for="subtask in task.subtasks" :key="subtask.id" class="subtask-item">
-                            <input type="checkbox" v-model="subtask.completed" @change="toggleSubtask(task)" />
+                            <input type="checkbox" v-model="subtask.completed" @change="toggleSubtask(task, subtask)" />
                             {{ subtask.title }}
                         </div>
                         <div class="subtask-counter">
@@ -115,12 +115,22 @@ const tasks = ref([])
 
 const loadTasks = async () => {
     try {
-        const res = await fetch(`http://127.0.0.1:8000/api/tasks?filter=` + filterType.value)
-        tasks.value = await res.json()
+        const res = await fetch(`http://127.0.0.1:8000/api/tasks?filter=` + filterType.value);
+        const data = await res.json();
+
+        tasks.value = data.map(task => ({
+            ...task,
+            completed: task.status === 'completed',
+            subtasks: task.subtasks.map(sub => ({
+                ...sub,
+                completed: sub.status === 'completed',
+            }))
+        }));
     } catch (error) {
-        console.error('Erro ao carregar tarefas:', error)
+        console.error('Erro ao carregar tarefas:', error);
     }
-}
+};
+
 
 watch(filterType, () => {
     loadTasks()
@@ -131,17 +141,59 @@ const openModal = (task) => {
     showModal.value = true
 }
 
-const toggleMainTask = (task) => {
-    task.subtasks.forEach(sub => {
-        sub.completed = task.completed
-    })
-}
+const toggleMainTask = async (task) => {
 
-const toggleSubtask = (task) => {
-    const total = task.subtasks.length
-    const done = task.subtasks.filter(s => s.completed).length
-    task.completed = (done === total)
-}
+    if (!task) return;
+
+    task.completed = !task.completed;
+
+    try {
+        await fetch(`http://127.0.0.1:8000/api/tasks/${task.id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                status: task.completed ? 'completed' : 'pending',
+            }),
+        });
+
+        task.subtasks.forEach(sub => {
+            sub.completed = task.completed;
+        });
+    } catch (error) {
+        console.error('Erro ao atualizar status da task:', error);
+        task.completed = !task.completed;
+    }
+};
+
+
+const toggleSubtask = async (task, subtask) => {
+
+    if (!subtask) return;
+
+    subtask.completed = !subtask.completed;
+
+    try {
+        await fetch(`http://127.0.0.1:8000/api/subtasks/${subtask.id}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                status: subtask.completed ? 'completed' : 'pending',
+            }),
+        });
+
+        const total = task.subtasks.length;
+        const done = task.subtasks.filter(s => s.completed).length;
+        task.completed = (done === total);
+    } catch (error) {
+        console.error('Erro ao atualizar status da subtask:', error);
+        subtask.completed = !subtask.completed;
+    }
+};
+
 
 const setFilter = (filter) => {
     filterType.value = filter
